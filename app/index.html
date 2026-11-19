@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vice Cover Studio — GTA 6-style cover art maker</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <h1>Vice Cover Studio</h1>
+    <p>Make GTA 6-style cover art from your own photos and a caption, then export it as a PNG to post.</p>
+  </div>
+  <p class="facts">An unofficial fan-made cover maker, not affiliated with Rockstar Games — no Rockstar logo, artwork or font is used. Grand Theft Auto VI launches 19 November 2026 on PlayStation 5 and Xbox Series X|S, and no PC version has been announced.</p>
+</header>
+<main class="app">
+  <section class="controls" aria-label="Cover controls">
+    <fieldset>
+      <legend>Photos</legend>
+      <p class="hint">Three slots. A panel shows one slot, so the same slot in every panel fills the cover with one photo, and different slots mix three photos.</p>
+      <div class="slot" id="slot-0">
+        <span>Photo 1</span>
+        <label class="upload">Upload <input type="file" accept="image/*" data-slot="0" hidden></label>
+        <button type="button" data-sample="0" data-photo="pier">Sample pier</button>
+        <button type="button" data-sample="0" data-photo="boulevard">Sample street</button>
+        <button type="button" data-clear="0">Clear</button>
+      </div>
+      <div class="slot" id="slot-1">
+        <span>Photo 2</span>
+        <label class="upload">Upload <input type="file" accept="image/*" data-slot="1" hidden></label>
+        <button type="button" data-sample="1" data-photo="pier">Sample pier</button>
+        <button type="button" data-sample="1" data-photo="boulevard">Sample street</button>
+        <button type="button" data-clear="1">Clear</button>
+      </div>
+      <div class="slot" id="slot-2">
+        <span>Photo 3</span>
+        <label class="upload">Upload <input type="file" accept="image/*" data-slot="2" hidden></label>
+        <button type="button" data-sample="2" data-photo="pier">Sample pier</button>
+        <button type="button" data-sample="2" data-photo="boulevard">Sample street</button>
+        <button type="button" data-clear="2">Clear</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Layout &amp; size</legend>
+      <div class="choices" id="layout-choices" role="group" aria-label="Layout">
+        <button type="button" data-layout="poster" aria-pressed="true">Poster</button>
+        <button type="button" data-layout="split" aria-pressed="false">Split</button>
+        <button type="button" data-layout="single" aria-pressed="false">Single</button>
+      </div>
+      <div class="choices" id="size-choices" role="group" aria-label="Export size">
+        <button type="button" data-size="square" aria-pressed="false">1080 x 1080</button>
+        <button type="button" data-size="portrait" aria-pressed="true">1080 x 1350</button>
+        <button type="button" data-size="wide" aria-pressed="false">1920 x 1080</button>
+      </div>
+      <div class="choices" id="grade-choices" role="group" aria-label="Colour grade">
+        <button type="button" data-grade="sunset" aria-pressed="true">Sunset</button>
+        <button type="button" data-grade="neon" aria-pressed="false">Neon</button>
+        <button type="button" data-grade="vice" aria-pressed="false">Vice</button>
+        <button type="button" data-grade="none" aria-pressed="false">No grade</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Selected panel</legend>
+      <p class="hint" id="panel-hint">Click a panel in the preview to select it, then drag inside it to move its photo.</p>
+      <label>Panel
+        <select id="panel-select">
+          <option value="0">Panel 1 (hero)</option>
+          <option value="1">Panel 2</option>
+          <option value="2">Panel 3</option>
+        </select>
+      </label>
+      <label>Shows photo
+        <select id="panel-slot">
+          <option value="0">Photo 1</option>
+          <option value="1">Photo 2</option>
+          <option value="2">Photo 3</option>
+        </select>
+      </label>
+      <label>Zoom <span id="zoom-value">100%</span>
+        <input id="panel-zoom" type="range" min="100" max="300" value="100">
+      </label>
+      <button type="button" id="panel-centre">Centre this photo</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Caption</legend>
+      <label>Caption <input id="caption" type="text" maxlength="32" value="SUNSET HEIST"></label>
+      <label>Tagline <input id="tagline" type="text" maxlength="24" value="VICE CITY"></label>
+      <label>Lettering
+        <select id="caption-font">
+          <option value="Anton">Anton — tall and bold</option>
+          <option value="Archivo Black">Archivo Black — heavy</option>
+          <option value="Bebas Neue">Bebas Neue — condensed</option>
+        </select>
+      </label>
+      <div class="choices" id="color-choices" role="group" aria-label="Caption colour">
+        <button type="button" data-color="#ffffff" aria-pressed="true" style="--swatch:#ffffff">White</button>
+        <button type="button" data-color="#ffe259" aria-pressed="false" style="--swatch:#ffe259">Gold</button>
+        <button type="button" data-color="#ff5e8a" aria-pressed="false" style="--swatch:#ff5e8a">Pink</button>
+        <button type="button" data-color="#7df9ff" aria-pressed="false" style="--swatch:#7df9ff">Ice</button>
+        <button type="button" data-color="#111111" aria-pressed="false" style="--swatch:#111111">Black</button>
+      </div>
+      <label>Caption size <span id="caption-size-value">100%</span>
+        <input id="caption-size" type="range" min="60" max="140" value="100">
+      </label>
+      <label class="check"><input id="frame" type="checkbox" checked> Poster frame</label>
+      <label class="check"><input id="sun" type="checkbox" checked> Synthwave sun</label>
+    </fieldset>
+
+    <button id="export" type="button" class="export">Export PNG</button>
+    <p id="status" role="status"></p>
+  </section>
+
+  <section class="preview" aria-label="Cover preview">
+    <canvas id="cover" width="1080" height="1350" aria-label="The cover"></canvas>
+    <p class="hint">Live preview — the PNG you export looks exactly like this. Drag a panel to move its photo.</p>
+  </section>
+</main>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
